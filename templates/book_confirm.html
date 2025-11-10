@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Confirm Booking</title>
+</head>
+<body>
+  <h2>Confirm Booking</h2>
+
+  <p>Tutor: <strong>{{ slot.tutor.name }}</strong></p>
+  <p>Subject: <strong>{{ slot.subject }}</strong></p>
+  <p>Date: <strong>{{ slot.date }}</strong></p>
+  <p>Time: <strong>{{ slot.start_time }} – {{ slot.end_time }}</strong></p>
+
+  <form method="POST">
+    <button type="submit">Confirm Booking</button>
+  </form>
+
+  <br>
+  <a href="/view_slots">Back to Available Slots</a>
+</body>
+</html>
