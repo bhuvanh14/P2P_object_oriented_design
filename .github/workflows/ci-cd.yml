@@ -12,7 +12,7 @@ env:
   REPORT_DIR: reports
 
 jobs:
-  setup-and-install:
+  build:
     name: Setup Python & Install Dependencies (cache pip)
     runs-on: ubuntu-latest
     outputs:
