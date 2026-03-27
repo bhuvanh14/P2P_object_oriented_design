@@ -1,0 +1,38 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:replace="navbar :: *"></div>
+
+<div class="container">
+
+<h2>Schedule Session</h2>
+
+<form method="post">
+
+<label>Mentor:</label>
+<select name="mentor.studentId">
+    <option th:each="m : ${mentors}"
+            th:value="${m.studentId}"
+            th:text="${m.firstName}">
+    </option>
+</select>
+
+<br><br>
+
+<label>Skill:</label>
+<select name="skill.skillId">
+    <option th:each="s : ${skills}"
+            th:value="${s.skillId}"
+            th:text="${s.name}">
+    </option>
+</select>
+
+<br><br>
+
+<button type="submit">Schedule</button>
+
+</form>
+
+</div>
+</body>
+</html>
