@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Slots</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h2>Available (Unbooked) Future Slots</h2>
+
+        <div class="nav">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/login}">Login</a>
+        </div>
+
+        <p class="muted" th:if="${#lists.isEmpty(slots)}">No available slots right now.</p>
+
+        <table th:if="${!#lists.isEmpty(slots)}">
+            <thead>
+            <tr>
+                <th>Tutor</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="slot : ${slots}">
+                <td th:text="${slot.tutor.name}"></td>
+                <td th:text="${slot.subject}"></td>
+                <td th:text="${slot.slotDate}"></td>
+                <td th:text="${slot.startTime}"></td>
+                <td th:text="${slot.endTime}"></td>
+                <td>
+                    <a th:href="@{/book/{id}(id=${slot.id})}"
+                       th:if="${currentUserId == null || currentUserId != slot.tutor.id}">Book</a>
+                    <span class="muted" th:if="${currentUserId != null && currentUserId == slot.tutor.id}">Your slot</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

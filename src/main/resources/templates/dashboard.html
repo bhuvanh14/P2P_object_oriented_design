@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h2>Dashboard</h2>
+        <p>Welcome, <strong th:text="${user.name}"></strong></p>
+
+        <div class="nav">
+            <a th:href="@{/become_tutor}">Become a Tutor</a>
+            <a th:href="@{/add_slot}">Add Slot</a>
+            <a th:href="@{/view_slots}">View Slots</a>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+
+        <h3>My Account</h3>
+        <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+        <p><strong>Role:</strong> <span th:text="${user.role}"></span></p>
+        <p><strong>Subjects:</strong> <span th:text="${subjects}"></span></p>
+        <p><strong>Contact:</strong> <span th:text="${user.contact != null ? user.contact : 'Not set'}"></span></p>
+
+        <h3>Sessions I Published (Tutor)</h3>
+        <p class="muted" th:if="${#lists.isEmpty(myTutorSlots)}">No slots published yet.</p>
+        <table th:if="${!#lists.isEmpty(myTutorSlots)}">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Subject</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="slot : ${myTutorSlots}">
+                <td th:text="${slot.slotDate}"></td>
+                <td th:text="${slot.startTime}"></td>
+                <td th:text="${slot.endTime}"></td>
+                <td th:text="${slot.subject}"></td>
+                <td th:text="${slot.booked ? 'Booked' : 'Available'}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h3>Sessions I Booked (Learner)</h3>
+        <p class="muted" th:if="${#lists.isEmpty(myLearnerSlots)}">No bookings yet.</p>
+        <table th:if="${!#lists.isEmpty(myLearnerSlots)}">
+            <thead>
+            <tr>
+                <th>Tutor</th>
+                <th>Date</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Subject</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="slot : ${myLearnerSlots}">
+                <td th:text="${slot.tutor.name}"></td>
+                <td th:text="${slot.slotDate}"></td>
+                <td th:text="${slot.startTime}"></td>
+                <td th:text="${slot.endTime}"></td>
+                <td th:text="${slot.subject}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h3>Requests</h3>
+        <p class="muted" th:text="${requests}"></p>
+    </div>
+</div>
+</body>
+</html>

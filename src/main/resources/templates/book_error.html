@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Error</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h2>Booking Error</h2>
+
+        <div class="error" th:text="${message}"></div>
+
+        <div class="nav">
+            <a th:href="@{/view_slots}">Back to Available Slots</a>
+            <a th:href="@{/dashboard}">Dashboard</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

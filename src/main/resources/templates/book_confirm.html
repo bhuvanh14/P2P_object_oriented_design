@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Booking</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h2>Confirm Booking</h2>
+
+        <p>You are about to book this tutoring slot:</p>
+        <ul>
+            <li><strong>Tutor:</strong> <span th:text="${slot.tutor.name}"></span></li>
+            <li><strong>Subject:</strong> <span th:text="${slot.subject}"></span></li>
+            <li><strong>Date:</strong> <span th:text="${slot.slotDate}"></span></li>
+            <li><strong>Time:</strong> <span th:text="${slot.startTime + ' - ' + slot.endTime}"></span></li>
+        </ul>
+
+        <form method="post" th:action="@{/book/{id}(id=${slot.id})}">
+            <button type="submit">Confirm Booking</button>
+        </form>
+
+        <p><a th:href="@{/view_slots}">Cancel</a></p>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutoring Scheduler</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>Tutoring Scheduler (Peer-to-Peer)</h1>
+        <p class="muted">Find tutors, publish slots, and book sessions quickly.</p>
+
+        <div class="nav">
+            <a th:href="@{/register}">Register</a>
+            <a th:href="@{/login}">Login</a>
+            <a th:href="@{/view_slots}">Browse Available Slots</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

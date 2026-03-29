@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Slot</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h2>Add Available Slot</h2>
+
+        <div class="error" th:if="${error}" th:text="${error}"></div>
+        <div class="success" th:if="${success}" th:text="${success}"></div>
+
+        <form method="post" th:action="@{/add_slot}">
+            <div class="form-group">
+                <label for="date">Date (YYYY-MM-DD)</label>
+                <input id="date" name="date" type="date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="startTime">Start Time (HH:MM)</label>
+                <input id="startTime" name="startTime" type="time" required>
+            </div>
+
+            <div class="form-group">
+                <label for="endTime">End Time (HH:MM)</label>
+                <input id="endTime" name="endTime" type="time" required>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Subject (Optional)</label>
+                <input id="subject" name="subject" placeholder="e.g., Chemistry">
+            </div>
+
+            <button type="submit">Create Slot</button>
+        </form>
+
+        <p><a th:href="@{/dashboard}">Back to Dashboard</a></p>
+    </div>
+</div>
+</body>
+</html>
