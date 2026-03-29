@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Give Feedback - SkillShare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/custom.css" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="~{navbar :: navbar}"></div>
+
+    <div class="container-custom section-spacing">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="text-center mb-4">
+                    <h2>Share Your Feedback</h2>
+                    <p class="text-secondary">Help us improve by rating your mentorship experience</p>
+                </div>
+
+                <!-- Session Details -->
+                <div class="bg-light rounded p-3 mb-4">
+                    <h5 class="mb-3">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        Session Details
+                    </h5>
+                    <div class="row g-2">
+                        <div class="col-sm-6">
+                            <small class="text-secondary">MENTOR</small>
+                            <div class="fw-semibold" th:text="${mentorName}"></div>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-secondary">MENTEE</small>
+                            <div class="fw-semibold" th:text="${menteeName}"></div>
+                        </div>
+                        <div class="col-12">
+                            <small class="text-secondary">SKILL</small>
+                            <div class="fw-semibold" th:text="${skillName}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <form action="/feedback" method="post" class="simple-form">
+                    <!-- Hidden fields -->
+                    <input type="hidden" name="sessionId" th:value="${sessionId}">
+                    <input type="hidden" name="reviewerId" th:value="${menteeId}">
+                    <input type="hidden" name="rateeId" th:value="${mentorId}">
+
+                    <!-- Rating -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold mb-3">How would you rate this mentorship session?</label>
+                        <div class="rating-stars d-flex justify-content-center gap-2 mb-2">
+                            <input type="radio" name="rating" value="1" id="star1" class="d-none">
+                            <label for="star1" class="star-label">
+                                <i class="far fa-star"></i>
+                            </label>
+                            <input type="radio" name="rating" value="2" id="star2" class="d-none">
+                            <label for="star2" class="star-label">
+                                <i class="far fa-star"></i>
+                            </label>
+                            <input type="radio" name="rating" value="3" id="star3" class="d-none">
+                            <label for="star3" class="star-label">
+                                <i class="far fa-star"></i>
+                            </label>
+                            <input type="radio" name="rating" value="4" id="star4" class="d-none">
+                            <label for="star4" class="star-label">
+                                <i class="far fa-star"></i>
+                            </label>
+                            <input type="radio" name="rating" value="5" id="star5" class="d-none" checked>
+                            <label for="star5" class="star-label">
+                                <i class="far fa-star"></i>
+                            </label>
+                        </div>
+                        <div class="text-center">
+                            <small class="text-secondary">Click to rate (1-5 stars)</small>
+                        </div>
+                    </div>
+
+                    <!-- Comment -->
+                    <div class="mb-4">
+                        <label for="comment" class="form-label fw-semibold">Your Feedback</label>
+                        <textarea name="comment" id="comment" class="form-control-custom"
+                                  rows="4" placeholder="Share your thoughts about the session..." required></textarea>
+                        <small class="text-secondary">Tell us what you learned and how we can improve</small>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="/sessions" class="btn btn-custom-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Sessions
+                        </a>
+                        <button type="submit" class="btn btn-custom-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Feedback
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .star-label {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .star-label:hover,
+        .star-label:hover ~ .star-label,
+        input:checked ~ .star-label {
+            color: #f59e0b;
+        }
+        input:checked + .star-label,
+        input:checked + .star-label ~ .star-label {
+            color: #f59e0b;
+        }
+        .simple-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Star rating interaction
+        document.querySelectorAll('.star-label').forEach((label, index) => {
+            label.addEventListener('click', () => {
+                const rating = index + 1;
+                document.querySelector(`input[value="${rating}"]`).checked = true;
+            });
+        });
+    </script>
+</body>
+</html>

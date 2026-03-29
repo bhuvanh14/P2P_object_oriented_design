@@ -1,0 +1,354 @@
+/* Custom CSS for SkillShare App - Modern Design System */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap');
+
+/* FontAwesome Icons */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+/* Color Variables */
+:root {
+  --bg-primary: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --secondary: #06B6D4;
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --border: #E2E8F0;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Global Styles */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Layout */
+.container-custom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section-spacing {
+  padding: 40px 0;
+}
+
+/* Navbar */
+.navbar-custom {
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-custom .navbar-brand {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  color: var(--primary) !important;
+  font-size: 1.5rem;
+}
+
+.navbar-custom .nav-link {
+  color: var(--text-primary) !important;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin: 0 4px;
+}
+
+.navbar-custom .nav-link:hover {
+  background-color: var(--bg-primary);
+  color: var(--primary) !important;
+  transform: translateY(-1px);
+}
+
+/* Cards */
+.card-custom {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+.card-custom:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.card-custom .card-body {
+  padding: 24px;
+}
+
+/* Buttons */
+.btn-custom-primary {
+  background: var(--primary);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  color: white;
+}
+
+.btn-custom-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  color: white;
+}
+
+.btn-custom-secondary {
+  background: transparent;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  color: var(--text-primary);
+}
+
+.btn-custom-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* Forms */
+.form-control-custom {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  transition: all 0.2s ease-in-out;
+  background: var(--bg-card);
+}
+
+.form-control-custom:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  outline: none;
+}
+
+/* Tables */
+.table-custom {
+  background: var(--bg-card);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.table-custom thead th {
+  background: var(--bg-primary);
+  border: none;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 16px;
+}
+
+.table-custom tbody tr {
+  transition: all 0.2s ease-in-out;
+}
+
+.table-custom tbody tr:hover {
+  background: var(--bg-primary);
+}
+
+.table-custom td {
+  border: none;
+  padding: 16px;
+  vertical-align: middle;
+}
+
+/* Status Badges */
+.badge-pending {
+  background: #F59E0B;
+  color: white;
+}
+
+.badge-accepted {
+  background: #10B981;
+  color: white;
+}
+
+.badge-rejected {
+  background: #EF4444;
+  color: white;
+}
+
+.badge-completed {
+  background: var(--primary);
+  color: white;
+}
+
+.badge-cancelled {
+  background: var(--text-secondary);
+  color: white;
+}
+
+/* Star Rating */
+.stars {
+  color: #F59E0B;
+  font-size: 1.2rem;
+}
+
+.stars .fa-star {
+  margin-right: 2px;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+/* Hero Section */
+.hero {
+  background: #1E3A8A;
+  color: white;
+  padding: 80px 0;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Feature Cards */
+.feature-card {
+  text-align: center;
+  padding: 32px;
+}
+
+.feature-card i {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+
+.feature-card h3 {
+  margin-bottom: 12px;
+}
+
+/* Mentor Cards */
+.mentor-card {
+  text-align: center;
+  padding: 16px;
+}
+
+.mentor-card .mentor-avatar {
+  width: 60px;
+  height: 60px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  margin: 0 auto 12px;
+}
+
+.mentor-card h5 {
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.mentor-card .department {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.mentor-card .rating {
+  margin-bottom: 8px;
+}
+
+/* Session Cards */
+.session-card {
+  margin-bottom: 16px;
+}
+
+.session-card .session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.session-card .session-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container-custom {
+    padding: 0 16px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .hero {
+    padding: 60px 0;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .card-custom .card-body {
+    padding: 20px;
+  }
+}
