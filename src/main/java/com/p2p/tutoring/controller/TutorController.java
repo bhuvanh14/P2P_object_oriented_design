@@ -48,6 +48,8 @@ public class TutorController {
             return "become_tutor";
         }
 
+        sessionUserService.updateRole(session, "tutor");
+
         return "redirect:/dashboard";
     }
 }

@@ -26,6 +26,13 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     public ServiceResult<Void> addSlot(User tutor, String date, String startTime, String endTime, String subject) {
+        if (tutor == null) {
+            return ServiceResult.failure("You must be logged in.");
+        }
+        if (tutor.getRole() == null || !tutor.getRole().equalsIgnoreCase("tutor")) {
+            return ServiceResult.failure("Only tutors can create slots.");
+        }
+
         try {
             LocalDate slotDate = LocalDate.parse(date.trim());
             LocalTime start = LocalTime.parse(startTime.trim());

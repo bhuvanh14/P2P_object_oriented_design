@@ -1,51 +1,69 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Available Slots</title>
-    <link rel="stylesheet" th:href="@{/styles.css}">
-</head>
+<head th:replace="~{fragments :: head('Available Slots')}"></head>
 <body>
-<div class="container">
-    <div class="card">
-        <h2>Available (Unbooked) Future Slots</h2>
+<th:block th:replace="~{fragments :: navbar}"></th:block>
 
-        <div class="nav">
-            <a th:href="@{/}">Home</a>
-            <a th:href="@{/dashboard}">Dashboard</a>
-            <a th:href="@{/login}">Login</a>
+<main class="app-page">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
+            <div>
+                <h1 class="h3 mb-1">Available slots</h1>
+                <div class="text-muted">Unbooked future sessions you can reserve.</div>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-outline-secondary" th:href="@{/}">Home</a>
+                <a class="btn btn-outline-primary" th:href="@{/dashboard}" th:if="${session.userId != null}">Dashboard</a>
+                <a class="btn btn-primary" th:href="@{/login}" th:if="${session.userId == null}">Login to book</a>
+            </div>
         </div>
 
-        <p class="muted" th:if="${#lists.isEmpty(slots)}">No available slots right now.</p>
+        <div class="alert alert-secondary" th:if="${#lists.isEmpty(slots)}">
+            No available slots right now.
+        </div>
 
-        <table th:if="${!#lists.isEmpty(slots)}">
-            <thead>
-            <tr>
-                <th>Tutor</th>
-                <th>Subject</th>
-                <th>Date</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="slot : ${slots}">
-                <td th:text="${slot.tutor.name}"></td>
-                <td th:text="${slot.subject}"></td>
-                <td th:text="${slot.slotDate}"></td>
-                <td th:text="${slot.startTime}"></td>
-                <td th:text="${slot.endTime}"></td>
-                <td>
-                    <a th:href="@{/book/{id}(id=${slot.id})}"
-                       th:if="${currentUserId == null || currentUserId != slot.tutor.id}">Book</a>
-                    <span class="muted" th:if="${currentUserId != null && currentUserId == slot.tutor.id}">Your slot</span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="card shadow-sm" th:if="${!#lists.isEmpty(slots)}">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                        <tr>
+                            <th>Tutor</th>
+                            <th>Subject</th>
+                            <th>Date</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="slot : ${slots}">
+                            <td class="fw-semibold" th:text="${slot.tutor.name}"></td>
+                            <td>
+                                <span class="badge text-bg-light"
+                                      th:text="${slot.subject != null && !#strings.isEmpty(slot.subject) ? slot.subject : 'General'}"></span>
+                            </td>
+                            <td th:text="${slot.slotDate}"></td>
+                            <td th:text="${slot.startTime}"></td>
+                            <td th:text="${slot.endTime}"></td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-primary"
+                                   th:href="@{/book/{id}(id=${slot.id})}"
+                                   th:if="${currentUserId == null || currentUserId != slot.tutor.id}">
+                                    Book
+                                </a>
+                                <span class="badge text-bg-secondary" th:if="${currentUserId != null && currentUserId == slot.tutor.id}">Your slot</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</main>
+
+<th:block th:replace="~{fragments :: footer}"></th:block>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
 </body>
 </html>

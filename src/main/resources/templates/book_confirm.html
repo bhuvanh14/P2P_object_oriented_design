@@ -1,30 +1,55 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirm Booking</title>
-    <link rel="stylesheet" th:href="@{/styles.css}">
-</head>
+<head th:replace="~{fragments :: head('Confirm Booking')}"></head>
 <body>
-<div class="container">
-    <div class="card">
-        <h2>Confirm Booking</h2>
+<th:block th:replace="~{fragments :: navbar}"></th:block>
 
-        <p>You are about to book this tutoring slot:</p>
-        <ul>
-            <li><strong>Tutor:</strong> <span th:text="${slot.tutor.name}"></span></li>
-            <li><strong>Subject:</strong> <span th:text="${slot.subject}"></span></li>
-            <li><strong>Date:</strong> <span th:text="${slot.slotDate}"></span></li>
-            <li><strong>Time:</strong> <span th:text="${slot.startTime + ' - ' + slot.endTime}"></span></li>
-        </ul>
+<main class="app-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-7">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h1 class="h4 mb-2">Confirm booking</h1>
+                        <p class="text-muted mb-4">Review the session details before finalizing.</p>
 
-        <form method="post" th:action="@{/book/{id}(id=${slot.id})}">
-            <button type="submit">Confirm Booking</button>
-        </form>
+                        <div class="list-group mb-4">
+                            <div class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Tutor</span>
+                                <span class="fw-semibold" th:text="${slot.tutor.name}"></span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Subject</span>
+                                <span>
+                                    <span class="badge text-bg-light"
+                                          th:text="${slot.subject != null && !#strings.isEmpty(slot.subject) ? slot.subject : 'General'}"></span>
+                                </span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Date</span>
+                                <span th:text="${slot.slotDate}"></span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between">
+                                <span class="text-muted">Time</span>
+                                <span th:text="${slot.startTime + ' - ' + slot.endTime}"></span>
+                            </div>
+                        </div>
 
-        <p><a th:href="@{/view_slots}">Cancel</a></p>
+                        <form method="post" th:action="@{/book/{id}(id=${slot.id})}">
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-primary" type="submit">Confirm booking</button>
+                                <a class="btn btn-outline-secondary" th:href="@{/view_slots}">Cancel</a>
+                                <a class="btn btn-outline-primary" th:href="@{/dashboard}">Dashboard</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</main>
+
+<th:block th:replace="~{fragments :: footer}"></th:block>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
 </body>
 </html>

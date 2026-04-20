@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Tutoring Scheduler</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous">
+
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav th:fragment="navbar" class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
+    <div class="container">
+        <a class="navbar-brand fw-semibold" th:href="@{/}">Tutoring Scheduler</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#appNavbar"
+                aria-controls="appNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="appNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" th:href="@{/view_slots}">Browse Slots</a></li>
+                <li class="nav-item" th:if="${session.userId != null}"><a class="nav-link" th:href="@{/dashboard}">Dashboard</a></li>
+                <li class="nav-item" th:if="${session.userId != null && session.userRole != null && session.userRole.toString().equalsIgnoreCase('tutor')}"><a class="nav-link" th:href="@{/add_slot}">Add Slot</a></li>
+                <li class="nav-item" th:if="${session.userId != null && (session.userRole == null || !session.userRole.toString().equalsIgnoreCase('tutor'))}"><a class="nav-link" th:href="@{/become_tutor}">Become a Tutor</a></li>
+                <li class="nav-item" th:if="${session.userId != null && session.userRole != null && session.userRole.toString().equalsIgnoreCase('tutor')}"><a class="nav-link" th:href="@{/become_tutor}">Tutor Profile</a></li>
+            </ul>
+
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-primary" th:if="${session.userId == null}" th:href="@{/login}">Login</a>
+                <a class="btn btn-primary" th:if="${session.userId == null}" th:href="@{/register}">Register</a>
+                <a class="btn btn-outline-secondary" th:if="${session.userId != null}" th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<footer th:fragment="footer" class="border-top mt-5">
+    <div class="container py-4 small text-muted">
+        <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+            <span>Peer-to-peer tutoring scheduler (demo).</span>
+            <span>Spring Boot + Thymeleaf</span>
+        </div>
+    </div>
+</footer>
+
+<script th:fragment="scripts" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>

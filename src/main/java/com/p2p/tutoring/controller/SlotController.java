@@ -27,8 +27,12 @@ public class SlotController {
 
     @GetMapping("/add_slot")
     public String addSlotForm(HttpSession session) {
-        if (sessionUserService.getCurrentUser(session).isEmpty()) {
+        User currentUser = sessionUserService.getCurrentUser(session).orElse(null);
+        if (currentUser == null) {
             return "redirect:/login";
+        }
+        if (currentUser.getRole() == null || !currentUser.getRole().equalsIgnoreCase("tutor")) {
+            return "redirect:/dashboard?error=Only%20tutors%20can%20create%20slots";
         }
         return "add_slot";
     }
@@ -45,6 +49,10 @@ public class SlotController {
         User currentUser = sessionUserService.getCurrentUser(session).orElse(null);
         if (currentUser == null) {
             return "redirect:/login";
+        }
+
+        if (currentUser.getRole() == null || !currentUser.getRole().equalsIgnoreCase("tutor")) {
+            return "redirect:/dashboard?error=Only%20tutors%20can%20create%20slots";
         }
 
         ServiceResult<Void> result = slotService.addSlot(currentUser, date, startTime, endTime, subject);

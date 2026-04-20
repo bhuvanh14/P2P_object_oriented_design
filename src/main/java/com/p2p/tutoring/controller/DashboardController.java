@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class DashboardController {
@@ -21,7 +22,11 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(HttpSession session, Model model) {
+    public String dashboard(
+            HttpSession session,
+            Model model,
+            @RequestParam(value = "error", required = false) String error
+    ) {
         User currentUser = sessionUserService.getCurrentUser(session).orElse(null);
         if (currentUser == null) {
             return "redirect:/login";
@@ -35,6 +40,10 @@ public class DashboardController {
 
         model.addAttribute("subjects", view.subjects());
         model.addAttribute("requests", view.requests());
+
+        if (error != null && !error.isBlank()) {
+            model.addAttribute("error", error);
+        }
 
         return "dashboard";
     }

@@ -1,23 +1,52 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutoring Scheduler</title>
-    <link rel="stylesheet" th:href="@{/styles.css}">
-</head>
+<head th:replace="~{fragments :: head('Tutoring Scheduler')}"></head>
 <body>
-<div class="container">
-    <div class="card">
-        <h1>Tutoring Scheduler (Peer-to-Peer)</h1>
-        <p class="muted">Find tutors, publish slots, and book sessions quickly.</p>
+<th:block th:replace="~{fragments :: navbar}"></th:block>
 
-        <div class="nav">
-            <a th:href="@{/register}">Register</a>
-            <a th:href="@{/login}">Login</a>
-            <a th:href="@{/view_slots}">Browse Available Slots</a>
+<main class="app-hero">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-12 col-lg-7">
+                <h1 class="display-6 fw-semibold mb-3">Peer-to-Peer Tutoring Scheduler</h1>
+                <p class="lead text-muted mb-4">
+                    Publish tutoring availability, discover upcoming sessions, and book quickly — all in a simple,
+                    session-based Spring Boot app.
+                </p>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-primary" th:href="@{/view_slots}">Browse Slots</a>
+                    <a class="btn btn-outline-primary" th:href="@{/register}" th:if="${session.userId == null}">Create account</a>
+                    <a class="btn btn-outline-secondary" th:href="@{/dashboard}" th:if="${session.userId != null}">Go to dashboard</a>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-5">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">Quick actions</h2>
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-outline-primary" th:href="@{/login}" th:if="${session.userId == null}">Login</a>
+                            <a class="btn btn-outline-secondary" th:href="@{/register}" th:if="${session.userId == null}">Register</a>
+                            <a class="btn btn-outline-primary" th:href="@{/add_slot}"
+                               th:if="${session.userId != null && session.userRole != null && session.userRole.toString().equalsIgnoreCase('tutor')}">
+                                Add a slot
+                            </a>
+                            <a class="btn btn-outline-primary" th:href="@{/become_tutor}"
+                               th:if="${session.userId != null && (session.userRole == null || !session.userRole.toString().equalsIgnoreCase('tutor'))}">
+                                Become a tutor
+                            </a>
+                            <a class="btn btn-outline-secondary" th:href="@{/view_slots}">View available slots</a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</main>
+
+<th:block th:replace="~{fragments :: footer}"></th:block>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
 </body>
 </html>

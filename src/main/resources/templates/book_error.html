@@ -1,23 +1,35 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Error</title>
-    <link rel="stylesheet" th:href="@{/styles.css}">
-</head>
+<head th:replace="~{fragments :: head('Booking Error')}"></head>
 <body>
-<div class="container">
-    <div class="card">
-        <h2>Booking Error</h2>
+<th:block th:replace="~{fragments :: navbar}"></th:block>
 
-        <div class="error" th:text="${message}"></div>
+<main class="app-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-7">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h1 class="h4 mb-3">Booking error</h1>
 
-        <div class="nav">
-            <a th:href="@{/view_slots}">Back to Available Slots</a>
-            <a th:href="@{/dashboard}">Dashboard</a>
+                        <div class="alert alert-danger" role="alert">
+                            <div class="fw-semibold mb-1">We couldn’t complete that booking.</div>
+                            <div th:text="${message}"></div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-primary" th:href="@{/view_slots}">Back to available slots</a>
+                            <a class="btn btn-outline-secondary" th:href="@{/dashboard}">Dashboard</a>
+                            <a class="btn btn-outline-secondary" th:href="@{/}">Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</main>
+
+<th:block th:replace="~{fragments :: footer}"></th:block>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
 </body>
 </html>

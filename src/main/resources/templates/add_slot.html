@@ -1,45 +1,58 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Slot</title>
-    <link rel="stylesheet" th:href="@{/styles.css}">
-</head>
+<head th:replace="~{fragments :: head('Add Slot')}"></head>
 <body>
-<div class="container">
-    <div class="card">
-        <h2>Add Available Slot</h2>
+<th:block th:replace="~{fragments :: navbar}"></th:block>
 
-        <div class="error" th:if="${error}" th:text="${error}"></div>
-        <div class="success" th:if="${success}" th:text="${success}"></div>
+<main class="app-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-7">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h1 class="h4 mb-2">Add an available slot</h1>
+                        <p class="text-muted mb-4">Publish a future time window so learners can book you.</p>
 
-        <form method="post" th:action="@{/add_slot}">
-            <div class="form-group">
-                <label for="date">Date (YYYY-MM-DD)</label>
-                <input id="date" name="date" type="date" required>
+                        <div class="alert alert-danger" role="alert" th:if="${error}" th:text="${error}"></div>
+                        <div class="alert alert-success" role="alert" th:if="${success}" th:text="${success}"></div>
+
+                        <form method="post" th:action="@{/add_slot}">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label" for="date">Date</label>
+                                    <input class="form-control" id="date" name="date" type="date" required>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="startTime">Start time</label>
+                                    <input class="form-control" id="startTime" name="startTime" type="time" required>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="endTime">End time</label>
+                                    <input class="form-control" id="endTime" name="endTime" type="time" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label" for="subject">Subject (optional)</label>
+                                    <input class="form-control" id="subject" name="subject" placeholder="e.g., Chemistry">
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2 mt-4">
+                                <button class="btn btn-primary" type="submit">Create slot</button>
+                                <a class="btn btn-outline-secondary" th:href="@{/dashboard}">Back to dashboard</a>
+                                <a class="btn btn-outline-primary" th:href="@{/view_slots}">Browse available slots</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="startTime">Start Time (HH:MM)</label>
-                <input id="startTime" name="startTime" type="time" required>
-            </div>
-
-            <div class="form-group">
-                <label for="endTime">End Time (HH:MM)</label>
-                <input id="endTime" name="endTime" type="time" required>
-            </div>
-
-            <div class="form-group">
-                <label for="subject">Subject (Optional)</label>
-                <input id="subject" name="subject" placeholder="e.g., Chemistry">
-            </div>
-
-            <button type="submit">Create Slot</button>
-        </form>
-
-        <p><a th:href="@{/dashboard}">Back to Dashboard</a></p>
+        </div>
     </div>
-</div>
+</main>
+
+<th:block th:replace="~{fragments :: footer}"></th:block>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
 </body>
 </html>

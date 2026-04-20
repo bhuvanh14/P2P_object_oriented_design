@@ -1,79 +1,184 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" th:href="@{/styles.css}">
-</head>
+<head th:replace="~{fragments :: head('Dashboard')}"></head>
 <body>
-<div class="container">
-    <div class="card">
-        <h2>Dashboard</h2>
-        <p>Welcome, <strong th:text="${user.name}"></strong></p>
+<th:block th:replace="~{fragments :: navbar}"></th:block>
 
-        <div class="nav">
-            <a th:href="@{/become_tutor}">Become a Tutor</a>
-            <a th:href="@{/add_slot}">Add Slot</a>
-            <a th:href="@{/view_slots}">View Slots</a>
-            <a th:href="@{/logout}">Logout</a>
+<main class="app-page">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-4">
+            <div>
+                <h1 class="h3 mb-1">Dashboard</h1>
+                <div class="text-muted">Welcome back, <span class="fw-semibold" th:text="${user.name}"></span>.</div>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-outline-primary" th:href="@{/view_slots}">Browse slots</a>
+                <a class="btn btn-primary" th:href="@{/add_slot}"
+                   th:if="${session.userRole != null && session.userRole.toString().equalsIgnoreCase('tutor')}">Add slot</a>
+                <a class="btn btn-outline-secondary" th:href="@{/become_tutor}">
+                    <span th:text="${session.userRole != null && session.userRole.toString().equalsIgnoreCase('tutor') ? 'Tutor profile' : 'Become a tutor'}"></span>
+                </a>
+            </div>
         </div>
 
-        <h3>My Account</h3>
-        <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
-        <p><strong>Role:</strong> <span th:text="${user.role}"></span></p>
-        <p><strong>Subjects:</strong> <span th:text="${subjects}"></span></p>
-        <p><strong>Contact:</strong> <span th:text="${user.contact != null ? user.contact : 'Not set'}"></span></p>
+        <div class="alert alert-danger" th:if="${error != null && !#strings.isEmpty(error)}" th:text="${error}"></div>
 
-        <h3>Sessions I Published (Tutor)</h3>
-        <p class="muted" th:if="${#lists.isEmpty(myTutorSlots)}">No slots published yet.</p>
-        <table th:if="${!#lists.isEmpty(myTutorSlots)}">
-            <thead>
-            <tr>
-                <th>Date</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Subject</th>
-                <th>Status</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="slot : ${myTutorSlots}">
-                <td th:text="${slot.slotDate}"></td>
-                <td th:text="${slot.startTime}"></td>
-                <td th:text="${slot.endTime}"></td>
-                <td th:text="${slot.subject}"></td>
-                <td th:text="${slot.booked ? 'Booked' : 'Available'}"></td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="alert alert-info" th:if="${requests != null && !#strings.isEmpty(requests)}">
+            <span class="fw-semibold">Requests:</span> <span th:text="${requests}"></span>
+        </div>
 
-        <h3>Sessions I Booked (Learner)</h3>
-        <p class="muted" th:if="${#lists.isEmpty(myLearnerSlots)}">No bookings yet.</p>
-        <table th:if="${!#lists.isEmpty(myLearnerSlots)}">
-            <thead>
-            <tr>
-                <th>Tutor</th>
-                <th>Date</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Subject</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="slot : ${myLearnerSlots}">
-                <td th:text="${slot.tutor.name}"></td>
-                <td th:text="${slot.slotDate}"></td>
-                <td th:text="${slot.startTime}"></td>
-                <td th:text="${slot.endTime}"></td>
-                <td th:text="${slot.subject}"></td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="card shadow-sm h-100" th:if="${session.userRole != null && session.userRole.toString().equalsIgnoreCase('tutor')}">
+                    <div class="card-body">
+                        <div class="text-muted small">Published slots</div>
+                        <div class="display-6" th:text="${#lists.size(myTutorSlots)}">0</div>
+                        <a class="btn btn-sm btn-outline-primary mt-2" th:href="@{/add_slot}">Create new slot</a>
+                    </div>
+                </div>
 
-        <h3>Requests</h3>
-        <p class="muted" th:text="${requests}"></p>
+                <div class="card shadow-sm h-100" th:if="${session.userRole == null || !session.userRole.toString().equalsIgnoreCase('tutor')}">
+                    <div class="card-body">
+                        <div class="text-muted small">Tutor status</div>
+                        <div class="h2 mb-0">Student</div>
+                        <div class="text-muted">You can still book sessions.</div>
+                        <a class="btn btn-sm btn-outline-secondary mt-2" th:href="@{/become_tutor}">Become a tutor</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="text-muted small">Bookings (learner)</div>
+                        <div class="display-6" th:text="${#lists.size(myLearnerSlots)}">0</div>
+                        <a class="btn btn-sm btn-outline-primary mt-2" th:href="@{/view_slots}">Find a session</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="text-muted small">Account</div>
+                        <div class="fw-semibold" th:text="${user.email}"></div>
+                        <div class="mt-2">
+                            <span class="badge text-bg-secondary" th:text="${user.role}">ROLE</span>
+                        </div>
+                        <a class="btn btn-sm btn-outline-secondary mt-2" th:href="@{/become_tutor}"
+                           th:if="${session.userRole != null && session.userRole.toString().equalsIgnoreCase('tutor')}">Update tutor details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">My profile</h2>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item px-0">
+                                <div class="text-muted small">Email</div>
+                                <div th:text="${user.email}"></div>
+                            </div>
+                            <div class="list-group-item px-0">
+                                <div class="text-muted small">Role</div>
+                                <div th:text="${user.role}"></div>
+                            </div>
+                            <div class="list-group-item px-0" th:if="${session.userRole != null && session.userRole.toString().equalsIgnoreCase('tutor')}">
+                                <div class="text-muted small">Subjects</div>
+                                <div th:text="${subjects}"></div>
+                            </div>
+                            <div class="list-group-item px-0" th:if="${session.userRole != null && session.userRole.toString().equalsIgnoreCase('tutor')}">
+                                <div class="text-muted small">Contact</div>
+                                <div th:text="${user.contact != null ? user.contact : 'Not set'}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-8">
+                <div class="card shadow-sm mb-4" th:if="${session.userRole != null && session.userRole.toString().equalsIgnoreCase('tutor')}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h2 class="h5 mb-0">Sessions I published (tutor)</h2>
+                            <a class="btn btn-sm btn-primary" th:href="@{/add_slot}"
+                               th:if="${session.userRole != null && session.userRole.toString().equalsIgnoreCase('tutor')}">Add slot</a>
+                        </div>
+
+                        <p class="text-muted" th:if="${#lists.isEmpty(myTutorSlots)}">No slots published yet.</p>
+                        <div class="table-responsive" th:if="${!#lists.isEmpty(myTutorSlots)}">
+                            <table class="table table-sm table-hover align-middle">
+                                <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Start</th>
+                                    <th>End</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="slot : ${myTutorSlots}">
+                                    <td th:text="${slot.slotDate}"></td>
+                                    <td th:text="${slot.startTime}"></td>
+                                    <td th:text="${slot.endTime}"></td>
+                                    <td>
+                                        <span class="badge text-bg-light"
+                                              th:text="${slot.subject != null && !#strings.isEmpty(slot.subject) ? slot.subject : 'General'}"></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge text-bg-success" th:if="${slot.booked}">Booked</span>
+                                        <span class="badge text-bg-secondary" th:if="${!slot.booked}">Available</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h2 class="h5 mb-0">Sessions I booked (learner)</h2>
+                            <a class="btn btn-sm btn-outline-primary" th:href="@{/view_slots}">Browse slots</a>
+                        </div>
+
+                        <p class="text-muted" th:if="${#lists.isEmpty(myLearnerSlots)}">No bookings yet.</p>
+                        <div class="table-responsive" th:if="${!#lists.isEmpty(myLearnerSlots)}">
+                            <table class="table table-sm table-hover align-middle">
+                                <thead>
+                                <tr>
+                                    <th>Tutor</th>
+                                    <th>Date</th>
+                                    <th>Start</th>
+                                    <th>End</th>
+                                    <th>Subject</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="slot : ${myLearnerSlots}">
+                                    <td th:text="${slot.tutor.name}"></td>
+                                    <td th:text="${slot.slotDate}"></td>
+                                    <td th:text="${slot.startTime}"></td>
+                                    <td th:text="${slot.endTime}"></td>
+                                    <td>
+                                        <span class="badge text-bg-light"
+                                              th:text="${slot.subject != null && !#strings.isEmpty(slot.subject) ? slot.subject : 'General'}"></span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</main>
+
+<th:block th:replace="~{fragments :: footer}"></th:block>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
 </body>
 </html>

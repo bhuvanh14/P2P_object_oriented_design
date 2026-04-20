@@ -1,34 +1,45 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Become Tutor</title>
-    <link rel="stylesheet" th:href="@{/styles.css}">
-</head>
+<head th:replace="~{fragments :: head('Tutor Profile')}"></head>
 <body>
-<div class="container">
-    <div class="card">
-        <h2>Become a Tutor</h2>
+<th:block th:replace="~{fragments :: navbar}"></th:block>
 
-        <div class="error" th:if="${error}" th:text="${error}"></div>
+<main class="app-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-7">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h1 class="h4 mb-2">Become a tutor</h1>
+                        <p class="text-muted mb-4">Add your subjects and contact details so learners can book you.</p>
 
-        <form method="post" th:action="@{/become_tutor}">
-            <div class="form-group">
-                <label for="subjects">Subjects</label>
-                <input id="subjects" name="subjects" placeholder="e.g., Math, Physics" required>
+                        <div class="alert alert-danger" role="alert" th:if="${error}" th:text="${error}"></div>
+
+                        <form method="post" th:action="@{/become_tutor}">
+                            <div class="mb-3">
+                                <label class="form-label" for="subjects">Subjects</label>
+                                <input class="form-control" id="subjects" name="subjects" placeholder="e.g., Math, Physics" required>
+                                <div class="form-text">Comma-separated is fine.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="contact">Contact details</label>
+                                <input class="form-control" id="contact" name="contact" placeholder="Phone, email, etc." required>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-primary" type="submit">Save tutor details</button>
+                                <a class="btn btn-outline-secondary" th:href="@{/dashboard}">Back to dashboard</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="contact">Contact Details</label>
-                <input id="contact" name="contact" placeholder="Phone, email, etc." required>
-            </div>
-
-            <button type="submit">Save Tutor Details</button>
-        </form>
-
-        <p><a th:href="@{/dashboard}">Back to Dashboard</a></p>
+        </div>
     </div>
-</div>
+</main>
+
+<th:block th:replace="~{fragments :: footer}"></th:block>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
 </body>
 </html>
