@@ -61,17 +61,37 @@ Request flow example (booking):
 ## 5) SOLID, GRASP, and Design Patterns
 
 ### SOLID
-- **Single Responsibility:** controllers are thin; services hold business rules.
-- **Open/Closed:** new booking constraints can be added by introducing new `BookingRule` implementations.
-- **Liskov Substitution:** service implementations are substituted through service interfaces.
-- **Interface Segregation:** use-case-specific interfaces (`AuthService`, `SlotService`, `BookingService`, etc.).
-- **Dependency Inversion:** controllers depend on abstractions, not concrete repository-heavy implementations.
+- **Single Responsibility (concept used: responsibility partitioning by layer):**
+  - Controllers handle transport concerns only (routing, request params, view names).
+  - Services handle use-case rules (validation, policy checks, entity updates).
+  - Repositories handle persistence only.
+- **Open/Closed (concept used: extension via polymorphism):**
+  - Booking checks are not hardcoded in one `if` chain in controllers.
+  - New booking behavior is added by introducing a new `BookingRule` implementation without modifying controller flow.
+- **Liskov Substitution (concept used: substitutable service contracts):**
+  - Any implementation of `BookingService`, `AuthService`, `SlotService`, etc., can be injected where the interface is expected.
+  - Example: `LoggingBookingService` and `CoreBookingService` both satisfy `BookingService`.
+- **Interface Segregation (concept used: role-focused contracts):**
+  - Instead of one large "God service", interfaces are split by use case (`AuthService`, `TutorProfileService`, `DashboardService`, `SlotService`, `BookingService`).
+  - Each consumer depends only on methods it actually needs.
+- **Dependency Inversion (concept used: depend on abstractions):**
+  - Controllers depend on interfaces, while Spring resolves concrete implementations through DI.
+  - This reduces coupling to implementation details and improves replaceability/testability.
 
 ### GRASP
-- **Controller:** MVC controllers receive system events.
-- **Low Coupling / High Cohesion:** logic grouped by domain capabilities.
-- **Indirection:** service interfaces decouple controllers from implementation details.
-- **Information Expert:** booking and slot rules live in dedicated service/rule classes.
+- **Controller (concept used: system operation handler):**
+  - Web controllers (`*Controller`) accept user actions as system events and delegate to services.
+  - They avoid owning domain decisions.
+- **Information Expert (concept used: assign behavior to the class with required information):**
+  - Booking validation is placed in booking rules/services that know slot/learner constraints.
+  - Slot-creation validation is placed in slot service where time/date/overlap information is processed.
+- **Low Coupling (concept used: minimize direct dependencies):**
+  - Controllers are coupled to service interfaces, not repository internals.
+  - Cross-cutting concerns are composed (decorator) instead of mixed into core logic.
+- **High Cohesion (concept used: keep related responsibilities together):**
+  - Auth logic in `service/auth`, booking logic in `service/booking`, slot logic in `service/slot`, etc.
+- **Indirection (concept used: mediator layer between UI and persistence):**
+  - Service interfaces and implementations sit between controller and repository to stabilize dependencies.
 
 ### Required GoF Patterns Implemented
 
@@ -79,6 +99,7 @@ Request flow example (booking):
    - `service/slot/SlotFactory.java`
    - `service/slot/DefaultSlotFactory.java`
    - used by `service/slot/SlotServiceImpl.java`
+   - **Concept used:** encapsulate object construction so slot setup rules are centralized and reusable.
 
 2. **Behavioral - Strategy**
    - `service/booking/rule/BookingRule.java`
@@ -86,11 +107,142 @@ Request flow example (booking):
    - `service/booking/rule/FutureSlotRule.java`
    - `service/booking/rule/SelfBookingRule.java`
    - orchestrated by `service/booking/CoreBookingService.java`
+   - **Concept used:** interchangeable validation algorithms selected via polymorphic rule objects.
 
 3. **Structural - Decorator**
    - `service/booking/BookingService.java` (component)
    - `service/booking/CoreBookingService.java` (core component)
    - `service/booking/LoggingBookingService.java` (decorator)
+   - **Concept used:** add behavior (logging) around booking operations without changing core booking code.
+
+### 5.1) Where Exactly They Are Used
+
+#### MVC (Model-View-Controller)
+
+**How MVC is used in this project:**
+- Request comes to a controller method (`@GetMapping`/`@PostMapping`).
+- Controller delegates business work to a service.
+- Service fetches/updates model entities via repositories.
+- Controller places results into `Model` and returns a Thymeleaf view name.
+- Thymeleaf templates render the response.
+
+- **Model (domain + persistence entities):**
+  - `src/main/java/com/p2p/tutoring/model/User.java`
+  - `src/main/java/com/p2p/tutoring/model/Slot.java`
+  - `src/main/java/com/p2p/tutoring/model/StudentRating.java`
+- **View (Thymeleaf templates):**
+  - `src/main/resources/templates/home.html`
+  - `src/main/resources/templates/register1.html`
+  - `src/main/resources/templates/login.html`
+  - `src/main/resources/templates/dashboard.html`
+  - `src/main/resources/templates/become_tutor.html`
+  - `src/main/resources/templates/add_slot.html`
+  - `src/main/resources/templates/view_slots.html`
+  - `src/main/resources/templates/book_confirm.html`
+  - `src/main/resources/templates/book_error.html`
+- **Controller (request handlers):**
+  - `src/main/java/com/p2p/tutoring/controller/HomeController.java`
+  - `src/main/java/com/p2p/tutoring/controller/AuthController.java`
+  - `src/main/java/com/p2p/tutoring/controller/DashboardController.java`
+  - `src/main/java/com/p2p/tutoring/controller/TutorController.java`
+  - `src/main/java/com/p2p/tutoring/controller/SlotController.java`
+  - `src/main/java/com/p2p/tutoring/controller/BookingController.java`
+
+#### GRASP (with concrete locations)
+
+- **Controller pattern:** MVC controllers receive system events and delegate.
+  - `src/main/java/com/p2p/tutoring/controller/*.java`
+  - Concept in practice: no repository-heavy business decisions in controller methods.
+- **Information Expert:** booking and slot rules handled by services/rules owning that knowledge.
+  - `src/main/java/com/p2p/tutoring/service/booking/CoreBookingService.java`
+  - `src/main/java/com/p2p/tutoring/service/booking/rule/*.java`
+  - `src/main/java/com/p2p/tutoring/service/slot/SlotServiceImpl.java`
+  - Concept in practice: rule objects validate slot state, time window, and ownership constraints.
+- **Low Coupling:** controllers depend on service abstractions instead of repositories directly.
+  - `src/main/java/com/p2p/tutoring/controller/AuthController.java`
+  - `src/main/java/com/p2p/tutoring/controller/BookingController.java`
+  - `src/main/java/com/p2p/tutoring/controller/SlotController.java`
+  - Concept in practice: easier to swap service internals without changing endpoints.
+- **High Cohesion:** services are grouped by use case.
+  - `src/main/java/com/p2p/tutoring/service/auth/*`
+  - `src/main/java/com/p2p/tutoring/service/profile/*`
+  - `src/main/java/com/p2p/tutoring/service/dashboard/*`
+  - `src/main/java/com/p2p/tutoring/service/slot/*`
+  - `src/main/java/com/p2p/tutoring/service/booking/*`
+  - Concept in practice: each package has one business theme and one reason to change.
+- **Indirection:** service interfaces isolate controllers from implementation details.
+  - `src/main/java/com/p2p/tutoring/service/auth/AuthService.java`
+  - `src/main/java/com/p2p/tutoring/service/slot/SlotService.java`
+  - `src/main/java/com/p2p/tutoring/service/booking/BookingService.java`
+  - `src/main/java/com/p2p/tutoring/service/profile/TutorProfileService.java`
+  - `src/main/java/com/p2p/tutoring/service/dashboard/DashboardService.java`
+  - Concept in practice: controllers remain stable even when service internals evolve.
+
+#### SOLID (with concrete locations)
+
+- **S - Single Responsibility Principle:**
+  - Controllers: `src/main/java/com/p2p/tutoring/controller/*.java` (HTTP + model binding)
+  - Business logic: `src/main/java/com/p2p/tutoring/service/**/*.java`
+  - Concept in practice: changing booking policy usually touches service/rule files, not controller routing.
+- **O - Open/Closed Principle:**
+  - Add booking rules by adding a new class implementing `BookingRule`.
+  - Existing extension point: `src/main/java/com/p2p/tutoring/service/booking/rule/BookingRule.java`
+  - Concept in practice: feature growth by addition, not modification.
+- **L - Liskov Substitution Principle:**
+  - Interface-based substitution:
+    - `AuthService` -> `AuthServiceImpl`
+    - `SlotService` -> `SlotServiceImpl`
+    - `BookingService` -> `CoreBookingService` and `LoggingBookingService`
+    - `DashboardService` -> `DashboardServiceImpl`
+    - `TutorProfileService` -> `TutorProfileServiceImpl`
+  - Concept in practice: controller code does not change when implementation changes.
+- **I - Interface Segregation Principle:**
+  - Small focused interfaces:
+    - `src/main/java/com/p2p/tutoring/service/auth/AuthService.java`
+    - `src/main/java/com/p2p/tutoring/service/slot/SlotService.java`
+    - `src/main/java/com/p2p/tutoring/service/booking/BookingService.java`
+    - `src/main/java/com/p2p/tutoring/service/profile/TutorProfileService.java`
+    - `src/main/java/com/p2p/tutoring/service/dashboard/DashboardService.java`
+  - Concept in practice: controllers depend on narrowly scoped API surface.
+- **D - Dependency Inversion Principle:**
+  - Controllers consume interfaces, not concrete implementations.
+  - Service wiring is provided by Spring DI (`@Service`, constructor injection).
+  - Concept in practice: dependency graph is configured by container, not manual `new` in controllers.
+
+#### GoF Patterns (with concrete locations)
+
+- **Creational - Factory Method:**
+  - `src/main/java/com/p2p/tutoring/service/slot/SlotFactory.java`
+  - `src/main/java/com/p2p/tutoring/service/slot/DefaultSlotFactory.java`
+  - Used in `src/main/java/com/p2p/tutoring/service/slot/SlotServiceImpl.java`
+  - Concept in practice: slot defaults and initialization are created in one place.
+- **Behavioral - Strategy:**
+  - Strategy interface: `src/main/java/com/p2p/tutoring/service/booking/rule/BookingRule.java`
+  - Concrete strategies:
+    - `src/main/java/com/p2p/tutoring/service/booking/rule/AlreadyBookedRule.java`
+    - `src/main/java/com/p2p/tutoring/service/booking/rule/FutureSlotRule.java`
+    - `src/main/java/com/p2p/tutoring/service/booking/rule/SelfBookingRule.java`
+  - Strategy consumer: `src/main/java/com/p2p/tutoring/service/booking/CoreBookingService.java`
+  - Concept in practice: each validation concern is isolated and independently testable.
+- **Structural - Decorator:**
+  - Component interface: `src/main/java/com/p2p/tutoring/service/booking/BookingService.java`
+  - Core component: `src/main/java/com/p2p/tutoring/service/booking/CoreBookingService.java`
+  - Decorator: `src/main/java/com/p2p/tutoring/service/booking/LoggingBookingService.java`
+  - Concept in practice: adds logging as a wrapper instead of polluting core business logic.
+
+#### Additional Design Principles Applied
+
+- **Separation of Concerns:**
+  - Web concerns: `controller`
+  - Domain/use-case concerns: `service`
+  - Persistence concerns: `repository`
+  - Presentation concerns: `templates` + `static`
+- **DRY (Don't Repeat Yourself):**
+  - Shared success/failure response handling via `src/main/java/com/p2p/tutoring/service/common/ServiceResult.java`
+  - Shared session user retrieval via `src/main/java/com/p2p/tutoring/service/SessionUserService.java`
+- **Composition over Inheritance:**
+  - Rule composition in `CoreBookingService` with injected `List<BookingRule>`
+  - Decorator composition in `LoggingBookingService` with `BookingService delegate`
 
 ## 6) Detailed File Structure (What Each File Does)
 
