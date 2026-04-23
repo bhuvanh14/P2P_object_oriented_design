@@ -2,7 +2,8 @@ package com.p2p.tutoring.controller;
 
 import com.p2p.tutoring.model.Slot;
 import com.p2p.tutoring.model.User;
-import com.p2p.tutoring.repository.SlotRepository;
+import com.p2p.tutoring.service.booking.BookingService;
+import com.p2p.tutoring.service.common.ServiceResult;
 import com.p2p.tutoring.service.SessionUserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -11,17 +12,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.time.LocalDateTime;
-
 @Controller
 public class BookingController {
 
     private final SessionUserService sessionUserService;
-    private final SlotRepository slotRepository;
+    private final BookingService bookingService;
 
-    public BookingController(SessionUserService sessionUserService, SlotRepository slotRepository) {
+    public BookingController(SessionUserService sessionUserService, BookingService bookingService) {
         this.sessionUserService = sessionUserService;
-        this.slotRepository = slotRepository;
+        this.bookingService = bookingService;
     }
 
     @GetMapping("/book/{slotId}")
@@ -31,28 +30,13 @@ public class BookingController {
             return "redirect:/login";
         }
 
-        Slot slot = slotRepository.findById(slotId).orElse(null);
-        if (slot == null) {
-            model.addAttribute("message", "Slot not found.");
+        ServiceResult<Slot> result = bookingService.getBookableSlot(slotId, currentUser);
+        if (!result.isSuccess()) {
+            model.addAttribute("message", result.getMessage());
             return "book_error";
         }
 
-        if (slot.isBooked()) {
-            model.addAttribute("message", "This slot is already booked.");
-            return "book_error";
-        }
-
-        if (!LocalDateTime.of(slot.getSlotDate(), slot.getStartTime()).isAfter(LocalDateTime.now())) {
-            model.addAttribute("message", "Only future slots can be booked.");
-            return "book_error";
-        }
-
-        if (slot.getTutor().getId().equals(currentUser.getId())) {
-            model.addAttribute("message", "Tutors cannot book their own slots.");
-            return "book_error";
-        }
-
-        model.addAttribute("slot", slot);
+        model.addAttribute("slot", result.getPayload());
         return "book_confirm";
     }
 
@@ -63,25 +47,11 @@ public class BookingController {
             return "redirect:/login";
         }
 
-        Slot slot = slotRepository.findById(slotId).orElse(null);
-        if (slot == null) {
-            model.addAttribute("message", "Slot not found.");
+        ServiceResult<Void> result = bookingService.bookSlot(slotId, currentUser);
+        if (!result.isSuccess()) {
+            model.addAttribute("message", result.getMessage());
             return "book_error";
         }
-
-        if (slot.isBooked()) {
-            model.addAttribute("message", "This slot is already booked.");
-            return "book_error";
-        }
-
-        if (slot.getTutor().getId().equals(currentUser.getId())) {
-            model.addAttribute("message", "Tutors cannot book their own slots.");
-            return "book_error";
-        }
-
-        slot.setBooked(true);
-        slot.setLearner(currentUser);
-        slotRepository.save(slot);
 
         return "redirect:/dashboard";
     }

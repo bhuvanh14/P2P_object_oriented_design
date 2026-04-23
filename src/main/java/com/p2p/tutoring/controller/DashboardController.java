@@ -1,43 +1,49 @@
 package com.p2p.tutoring.controller;
 
-import com.p2p.tutoring.model.Slot;
 import com.p2p.tutoring.model.User;
-import com.p2p.tutoring.repository.SlotRepository;
+import com.p2p.tutoring.service.dashboard.DashboardService;
+import com.p2p.tutoring.service.dashboard.DashboardView;
 import com.p2p.tutoring.service.SessionUserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class DashboardController {
 
     private final SessionUserService sessionUserService;
-    private final SlotRepository slotRepository;
+    private final DashboardService dashboardService;
 
-    public DashboardController(SessionUserService sessionUserService, SlotRepository slotRepository) {
+    public DashboardController(SessionUserService sessionUserService, DashboardService dashboardService) {
         this.sessionUserService = sessionUserService;
-        this.slotRepository = slotRepository;
+        this.dashboardService = dashboardService;
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(HttpSession session, Model model) {
+    public String dashboard(
+            HttpSession session,
+            Model model,
+            @RequestParam(value = "error", required = false) String error
+    ) {
         User currentUser = sessionUserService.getCurrentUser(session).orElse(null);
         if (currentUser == null) {
             return "redirect:/login";
         }
 
-        List<Slot> myTutorSlots = slotRepository.findByTutorOrderBySlotDateDescStartTimeDesc(currentUser);
-        List<Slot> myLearnerSlots = slotRepository.findByLearnerOrderBySlotDateDescStartTimeDesc(currentUser);
+        DashboardView view = dashboardService.buildDashboard(currentUser);
 
-        model.addAttribute("user", currentUser);
-        model.addAttribute("myTutorSlots", myTutorSlots);
-        model.addAttribute("myLearnerSlots", myLearnerSlots);
+        model.addAttribute("user", view.user());
+        model.addAttribute("myTutorSlots", view.myTutorSlots());
+        model.addAttribute("myLearnerSlots", view.myLearnerSlots());
 
-        model.addAttribute("subjects", currentUser.getSubjects() == null ? "Not set" : currentUser.getSubjects());
-        model.addAttribute("requests", "No request workflow is wired yet.");
+        model.addAttribute("subjects", view.subjects());
+        model.addAttribute("requests", view.requests());
+
+        if (error != null && !error.isBlank()) {
+            model.addAttribute("error", error);
+        }
 
         return "dashboard";
     }

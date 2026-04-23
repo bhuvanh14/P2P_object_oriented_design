@@ -1,8 +1,9 @@
 package com.p2p.tutoring.controller;
 
 import com.p2p.tutoring.model.User;
-import com.p2p.tutoring.repository.UserRepository;
+import com.p2p.tutoring.service.common.ServiceResult;
 import com.p2p.tutoring.service.SessionUserService;
+import com.p2p.tutoring.service.profile.TutorProfileService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class TutorController {
 
     private final SessionUserService sessionUserService;
-    private final UserRepository userRepository;
+    private final TutorProfileService tutorProfileService;
 
-    public TutorController(SessionUserService sessionUserService, UserRepository userRepository) {
+    public TutorController(SessionUserService sessionUserService, TutorProfileService tutorProfileService) {
         this.sessionUserService = sessionUserService;
-        this.userRepository = userRepository;
+        this.tutorProfileService = tutorProfileService;
     }
 
     @GetMapping("/become_tutor")
@@ -41,18 +42,13 @@ public class TutorController {
             return "redirect:/login";
         }
 
-        String normalizedSubjects = subjects == null ? "" : subjects.trim();
-        String normalizedContact = contact == null ? "" : contact.trim();
-
-        if (normalizedSubjects.isBlank() || normalizedContact.isBlank()) {
-            model.addAttribute("error", "Subjects and contact details are required.");
+        ServiceResult<Void> result = tutorProfileService.becomeTutor(currentUser, subjects, contact);
+        if (!result.isSuccess()) {
+            model.addAttribute("error", result.getMessage());
             return "become_tutor";
         }
 
-        currentUser.setSubjects(normalizedSubjects);
-        currentUser.setContact(normalizedContact);
-        currentUser.setRole("tutor");
-        userRepository.save(currentUser);
+        sessionUserService.updateRole(session, "tutor");
 
         return "redirect:/dashboard";
     }
